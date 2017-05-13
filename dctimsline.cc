@@ -1,0 +1,73 @@
+#include "dctimsline.h"
+#include <string>
+#include <time.h>
+
+dcTimsLine::dcTimsLine(){
+  this->setName("DC TIMS LINE");
+}
+
+void dcTimsLine::arrive(Player *arriver){
+	if (arriver->GetTimLine()){
+		int time1 = arriver->GetTimDice();
+		cout << "This is your " << time1 << " turn in TimsLine." << endl << "Please enter roll." << endl;
+		std::string roll;
+		while (cin >> roll){
+			if (roll == "roll"){
+				srand((unsigned) time(0));
+				int dice1 = std::rand() % 6 + 1;
+				int dice2 = std::rand() % 6 + 1;
+				cout << "You rolled " << dice1 << " and " << dice2 << endl;
+				arriver->getGame()->setDice();
+				if (time1 < 3){
+					if (dice1 == dice2){
+						cout << "You are moving!" << endl;
+						arriver->move(dice1+dice2);
+						arriver->SetTimLine(false);
+						arriver->SetTimDine(0);
+						cout << "Please enter a command."<< endl;
+						break;
+					}
+					else{
+						cout << "fail to get out" << endl;
+						arriver->SetTimDine(time1 + 1);
+						cout << "Please enter a command."<< endl;
+						break;
+					}
+				}
+				else{
+					if (dice1 == dice2){
+						cout << "You are moving!" << endl;
+						arriver->move(dice1+dice2);
+						arriver->SetTimLine(false);
+						arriver->SetTimDine(0);
+						cout << "Please enter a command."<< endl;
+						break;
+					}
+					else{
+						cout << "You fail to roll double in three turns, Please enter pay for pay or card for using a card." << endl;
+						std::string input;
+						if (input == "pay"){
+							arriver->LoseMoney(50);
+							if(!arriver->IsBankrupt()){
+								arriver->SetTimLine(false);
+								arriver->SetTimDine(0);
+							}
+							cout << "Please enter a command."<< endl;
+							break;
+						}
+						else{
+							arriver->SetNumOfCup(arriver->GetNumOfCup()-1);
+							arriver->SetTimLine(false);
+							arriver->SetTimDine(0);
+							cout << "Please enter a command."<< endl;
+							break;
+						}
+					}
+				}
+			}
+			else{
+				cout << "wrong command! Please check and enter a right one." << endl;
+			}
+		}
+	}
+}
